@@ -45,6 +45,13 @@ class CloudStorageHelper:
 
         return blob
 
-    def get_signed_url(self, gcs_uri: str, expiration: int = 3600) -> str:
-        blob = self.client.bucket(gcs_uri.split('/')[2]).blob(gcs_uri.split('/')[3])
-        return blob.generate_signed_url(expiration, version="v4")
+    def create_blob(self, bucket_name: str, filename: str) -> storage.Blob:
+        blob = self.client.bucket(bucket_name).blob(filename)
+        return blob
+
+    def get_signed_url(self, bucket_id: str, blob_id: str, method: str, expiration: int = 3600) -> str:
+        blob = self.client.bucket(bucket_id).blob(blob_id)
+        return blob.generate_signed_url(
+            expiration=expiration,
+            version="v4",
+            method=method)

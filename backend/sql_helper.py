@@ -53,11 +53,12 @@ def list_users(db: Session) -> list[User]:
 #  Documents
 ##############
 def create_document(
-        db: Session, title: str, gcs_uri: str, owner_id: int) -> Document:
+        db: Session, title: str, bucket_id: str, blob_id: str, owner_id: int) -> Document:
 
     db_document = Document(
         title=title,
-        gcs_uri=gcs_uri,
+        bucket_id=bucket_id,
+        blob_id=blob_id,
         owner_id=owner_id,
         created_at=datetime.utcnow(),
         updated_at=datetime.utcnow()
@@ -80,8 +81,22 @@ def delete_document(db: Session, document_id: int) -> bool:
     db.commit()
     return True
 
+
+def get_document(db: Session, document_id: int) -> Document:
+    return db.query(Document).filter(Document.id == document_id).first()
+
+def update_document(db: Session, document_id: int, **kwargs):
+    db_document = db.query(Document).filter(Document.id == document_id).first()
+    if db_document is None:
+        return False
+    for key, value in kwargs.items():
+        setattr(db_document, key, value)
+    db_document.updated_at = datetime.utcnow()
+    db.commit()
+    return True
+
+
 if __name__ == '__main__':
     from database import SessionLocal
     db = SessionLocal()
     print(list_users(db))
-

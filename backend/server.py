@@ -1,14 +1,20 @@
+from datetime import datetime
+from uuid import uuid4
+
+import config
 import sql_helper
+import redis_helper
 from database import SessionLocal
-from flask import Flask, json, make_response, request, abort
+from flask import Flask, abort, json, make_response, request
 from gcs_helper import CloudStorageHelper
 from google.cloud import storage
 from google.cloud.pubsub_v1 import PublisherClient
-import config
+from redis import Redis
 
 app = Flask(__name__)
 gcs_helper = CloudStorageHelper(storage.Client())
 publisher = PublisherClient()
+redis = Redis(host=config.REDIS_HOST, port=config.REDIS_PORT)
 
 
 def store_login_status(response, user, max_age=60 * 60 * 24 * 7):
@@ -29,15 +35,13 @@ def check_login_status(request):
     return True, user, "OK"
 
 
-def require_login(func):
-    def wrapper(*args, **kwargs):
-        success, _, message = check_login_status(request)
-        if not success:
-            return make_response({"success": False, "message": message}, 400)
-        return func(*args, **kwargs)
-    return wrapper
+def get_user():
+    user_id = request.cookies.get('user_id')
+    user = sql_helper.get_user(SessionLocal(), user_id)
+    return user
 
 
+@app.before_request
 def check_login():
     whitelisted_paths = [
         '/login',
@@ -45,7 +49,7 @@ def check_login():
         '/health',
         '/'
     ]
-    if request.path not in whitelisted_paths:
+    if request.path in whitelisted_paths:
         return
 
     success, user, message = check_login_status(request)
@@ -97,40 +101,75 @@ def login():
 
     return response
 
+@app.route('/document/<int:document_id>', methods=['GET'])
+def get_document(document_id):
+    document = sql_helper.get_document(SessionLocal(), document_id)
+    if not document:
+        return make_response({"success": False, "message": "Document does not exist"}, 400)
+    
+    return make_response({
+        "success": True,
+        "document": {
+            "id": document.id,
+            "title": document.title,
+            "image_url": gcs_helper.get_signed_url(document.bucket_id, document.blob_id, "GET"),
+        }
+    }, 200)
 
-@require_login
 @app.route('/documents', methods=['GET'])
 def list_documents():
-    success, user, message = check_login_status(request)
-    if not success:
-        return make_response({"success": False, "message": message}, 400)
-
+    user = get_user()
     documents = sql_helper.list_documents(SessionLocal(), user.id)
     documents = [
         {
             "id": document.id,
             "title": document.title,
-            "gcs_uri": document.gcs_uri,
-            "image_url": gcs_helper.get_signed_url(document.gcs_uri),
+            "image_url": gcs_helper.get_signed_url(document.bucket_id, document.blob_id, "GET"),
         }
         for document in documents
     ]
     return make_response({"success": True, "documents": documents}, 200)
 
+@app.route('/related_documents/<int:document_id>', methods=['GET'])
+def list_related_documents(document_id):
+    documents = redis_helper.get_related_documents(redis, document_id)
+    return make_response({"success": True, "documents": documents}, 200)
 
-@app.route('/document', methods=['POST'])
+@app.route('/request_upload_url', methods=['POST'])
 def upload_document():
-    success, user, message = check_login_status(request)
-    if not success:
-        return make_response({"success": False, "message": message}, 400)
+    user = get_user()
+    data = request.get_json()
+    bucket_id, blob_id = config.BUCKET_NAME, str(uuid4())
+    title = data.get('title', blob_id)
 
-    file = request.files.get('file')
+    document = sql_helper.create_document(SessionLocal(), title, bucket_id, blob_id, user.id)
+    presigned_url = gcs_helper.get_signed_url(bucket_id, blob_id, 'PUT')
 
-    if not file:
-        return make_response({"success": False, "message": "Missing file"}, 400)
+    return make_response({
+        "success": True,
+        "message": "OK",
+        "document_id": document.id,
+        "presigned_url": presigned_url}, 200)
 
-    gcs_blob = gcs_helper.upload_file(config.BUCKET_NAME, file.stream.read())
-    gcs_uri = f'gs://{gcs_blob.bucket.name}/{gcs_blob.name}'
-    sql_helper.create_document(SessionLocal(), file.filename, gcs_uri, user.id)
-    publisher.publish(config.PUBSUB_TOPIC, gcs_uri.encode('utf-8'))
+
+@app.route('/notify_upload_complete', methods=['POST'])
+def notify_upload_complete():
+    data = request.get_json()
+    document_id = data.get('document_id')
+    if not document_id:
+        return make_response({"success": False, "message": "Missing document_id"}, 400)
+
+    document = sql_helper.get_document(SessionLocal(), document_id)
+
+    if not document:
+        return make_response({"success": False, "message": "Document does not exist"}, 400)
+
+    sql_helper.update_document(SessionLocal(), document_id)
+
+    publisher.publish(config.PUBSUB_TOPIC, json.dumps({
+        "document_id": document_id,
+        "bucket_id": document.bucket_id,
+        "blob_id": document.blob_id
+    }).encode('utf-8'))
+
     return make_response({"success": True, "message": "OK"}, 200)

@@ -23,7 +23,8 @@ class Document(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
-    gcs_uri = Column(String)
+    bucket_id = Column(String)
+    blob_id = Column(String)
     owner_id = Column(Integer, ForeignKey("users.id"))
     created_at = Column(DateTime(timezone=True))
     updated_at = Column(DateTime(timezone=True))
