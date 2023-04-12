@@ -1,0 +1,243 @@
+{
+	"info": {
+		"_postman_id": "07e2a415-da1f-459c-bcd2-7b05e79b3ea0",
+		"name": "Danger Library System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4788876"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{host}}:{{port}}/health",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Account",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"hello-user\",\n    \"password\": \"123\"\n}"
+				},
+				"url": {
+					"raw": "{{scheme}}://{{host}}:{{port}}/signup",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"hello-user\",\n    \"password\": \"123\"\n}"
+				},
+				"url": {
+					"raw": "{{scheme}}://{{host}}:{{port}}/login",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Documents",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{host}}:{{port}}/documents",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"documents"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Request Upload URL",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Some File Title\"\n}"
+				},
+				"url": {
+					"raw": "{{scheme}}://{{host}}:{{port}}/request_upload_url",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"request_upload_url"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload file to GCS",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "file",
+					"file": {
+						"src": "/Users/klaus/Downloads/613a0552b2f0c2596a43f59198827f78.png"
+					}
+				},
+				"url": {
+					"raw": "https://storage.googleapis.com/demo-bucket-dododo2/ba2075d6-eaf6-43a4-b3a4-cd45e045ca7c?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=cloud-storage-service-account%40bold-network-380012.iam.gserviceaccount.com%2F20230411%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20230411T122849Z&X-Goog-Expires=3600&X-Goog-SignedHeaders=host&X-Goog-Signature=8cc8d8cfbc9e6d4696c17bd4a2c2ee790296d1f9648f0f204cc22beb8da5262c78c51506642d6024a913b224eda0333f4574243b2848103d87388ac5a4c5d88bf42e00b02fb68d5d489b6dd1471bf6cc59ee3c34d90e97caa90ca54a5d1405f0b513ce79e39a6f200e7771e85218220f95a437efc9a207f22d9b09939f13f63260d6b1c49319535e455f2dfa9ce22476b91331eef790fe64e3aa52adaa3fc6fbaba2f00771fce03193b0f4aaf0f4ec6428b8390be6a2f88b4b4798655a7d4edf7a8a4e3348e85119d9fc30fa0702970670d44fa9446a1710acf1351edd852e223623e112aa2a289b2ec21150f821ab85ffbf5c29388d79444b7c4b0a10665eae",
+					"protocol": "https",
+					"host": [
+						"storage",
+						"googleapis",
+						"com"
+					],
+					"path": [
+						"demo-bucket-dododo2",
+						"ba2075d6-eaf6-43a4-b3a4-cd45e045ca7c"
+					],
+					"query": [
+						{
+							"key": "X-Goog-Algorithm",
+							"value": "GOOG4-RSA-SHA256"
+						},
+						{
+							"key": "X-Goog-Credential",
+							"value": "cloud-storage-service-account%40bold-network-380012.iam.gserviceaccount.com%2F20230411%2Fauto%2Fstorage%2Fgoog4_request"
+						},
+						{
+							"key": "X-Goog-Date",
+							"value": "20230411T122849Z"
+						},
+						{
+							"key": "X-Goog-Expires",
+							"value": "3600"
+						},
+						{
+							"key": "X-Goog-SignedHeaders",
+							"value": "host"
+						},
+						{
+							"key": "X-Goog-Signature",
+							"value": "8cc8d8cfbc9e6d4696c17bd4a2c2ee790296d1f9648f0f204cc22beb8da5262c78c51506642d6024a913b224eda0333f4574243b2848103d87388ac5a4c5d88bf42e00b02fb68d5d489b6dd1471bf6cc59ee3c34d90e97caa90ca54a5d1405f0b513ce79e39a6f200e7771e85218220f95a437efc9a207f22d9b09939f13f63260d6b1c49319535e455f2dfa9ce22476b91331eef790fe64e3aa52adaa3fc6fbaba2f00771fce03193b0f4aaf0f4ec6428b8390be6a2f88b4b4798655a7d4edf7a8a4e3348e85119d9fc30fa0702970670d44fa9446a1710acf1351edd852e223623e112aa2a289b2ec21150f821ab85ffbf5c29388d79444b7c4b0a10665eae"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Notify Upload Complete",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"document_id\": 1\n}"
+				},
+				"url": {
+					"raw": "{{scheme}}://{{host}}:{{port}}/notify_upload_complete",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"notify_upload_complete"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Related Documents",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{scheme}}://{{host}}:{{port}}/related_documents/2",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"related_documents",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,17 @@
+runtime: python39
+service: library-system-backend
+handlers:
+  # This handler routes all requests not caught above to your main app. It is
+  # required when static routes are defined, but can be omitted (along with
+  # the entire handlers section) when there are no static files defined.
+  - url: /.*
+    script: auto
+env_variables:
+  SQLALCHEMY_DATABASE_URL: postgresql://user:password@10.48.208.3:5432/postgres
+  BUCKET_NAME: dg-library-klaus-2212
+  PUBSUB_TOPIC: projects/bold-network-380012/topics/dg-library
+  REDIS_HOST: 10.89.180.51
+  REDIS_PORT: 6379
+
+vpc_access_connector:
+ name: projects/bold-network-380012/locations/asia-east2/connectors/vpc-access

@@ -12,7 +12,7 @@ from google.cloud.pubsub_v1 import PublisherClient
 from redis import Redis
 
 app = Flask(__name__)
-gcs_helper = CloudStorageHelper(storage.Client())
+gcs_helper = CloudStorageHelper(storage.Client.from_service_account_json('./service-account.json'))
 publisher = PublisherClient()
 redis = Redis(host=config.REDIS_HOST, port=config.REDIS_PORT)
 
