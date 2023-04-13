@@ -56,6 +56,10 @@ def check_login():
     if not success:
         return make_response({"success": False, "message": message}, 400)
 
+@app.after_request
+def add_cors_header(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
 @app.route('/')
 @app.route('/health')
