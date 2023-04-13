@@ -13,7 +13,7 @@ from redis import Redis
 
 app = Flask(__name__)
 gcs_helper = CloudStorageHelper(storage.Client.from_service_account_json('./service-account.json'))
-publisher = PublisherClient()
+publisher = PublisherClient.from_service_account_json('./service-account.json')
 redis = Redis(host=config.REDIS_HOST, port=config.REDIS_PORT)
 
 
@@ -56,6 +56,10 @@ def check_login():
     if not success:
         return make_response({"success": False, "message": message}, 400)
 
+@app.after_request
+def add_cors_header(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
 @app.route('/')
 @app.route('/health')
