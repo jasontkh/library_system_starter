@@ -13,7 +13,7 @@ from redis import Redis
 
 app = Flask(__name__)
 gcs_helper = CloudStorageHelper(storage.Client.from_service_account_json('./service-account.json'))
-publisher = PublisherClient()
+publisher = PublisherClient.from_service_account_json('./service-account.json')
 redis = Redis(host=config.REDIS_HOST, port=config.REDIS_PORT)
 
 
