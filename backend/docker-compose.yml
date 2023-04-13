@@ -1,6 +1,6 @@
 version: "3.9"
 services:
-  database:
+  postgres:
     image: postgres:15
     environment:
       POSTGRES_PASSWORD: password
@@ -15,3 +15,11 @@ services:
     ports:
       - "6379:6379"
       - "8001:8001"
+  backend-api:
+    build: .
+    image: libray-system:latest
+    ports:
+      - "5000:5000"
+    environment:
+      SQLALCHEMY_DATABASE_URL: postgresql://user:password@postgres:5432/database
+      REDIS_HOST: redis
