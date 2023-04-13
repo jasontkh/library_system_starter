@@ -14,18 +14,19 @@ export default function Home() {
   const [pw, setPW] = useState()
 
   const loginBtnClick = async () => {
-    // try {
-    //   const login_res = await axios.post(process.env.API_BASE + "/login", {
-    //     username: name,
-    //     password: pw,
-    //   })
+    try {
+      const login_res = await axios.post(process.env.NEXT_PUBLIC_API_BASE + "/login", {
+        username: name,
+        password: pw,
+      }, {withCredentials: true})
   
-    //   console.log(login_res)
-    // } catch (err) {
-    //   toast.error(err.message)
-    // }
+      console.log(login_res)
 
-    document.location = "/document_page"
+      document.location = "/document_page"
+    } catch (err) {
+      toast.error(err.message)
+    }
+
     
   }
 

@@ -12,7 +12,7 @@ export default function DocumentPage() {
 
   useEffect(()=>{
 
-    axios.get(process.env.NEXT_PUBLIC_API_BASE + "/documents").then(data => {
+    axios.get(process.env.NEXT_PUBLIC_API_BASE + "/documents", { withCredentials: true }).then(data => {
       setAllDocuments([])
       setErrorMessage(null)
     }).catch(err => {

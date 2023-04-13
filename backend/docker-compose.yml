@@ -20,6 +20,8 @@ services:
     image: libray-system:latest
     ports:
       - "5000:5000"
+    volumes:
+      - .:/app
     environment:
       SQLALCHEMY_DATABASE_URL: postgresql://user:password@postgres:5432/database
       REDIS_HOST: redis

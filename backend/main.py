@@ -10,8 +10,11 @@ from gcs_helper import CloudStorageHelper
 from google.cloud import storage
 from google.cloud.pubsub_v1 import PublisherClient
 from redis import Redis
+import jwt
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+CORS(app, supports_credentials=True)
 gcs_helper = CloudStorageHelper(storage.Client.from_service_account_json('./service-account.json'))
 publisher = PublisherClient.from_service_account_json('./service-account.json')
 redis = Redis(host=config.REDIS_HOST, port=config.REDIS_PORT)
@@ -21,12 +24,22 @@ def store_login_status(response, user, max_age=60 * 60 * 24 * 7):
     # WARNING: Very insecure cookie setting
     # This is just for demo purposes
     # HK Golden had the same security issue back in 200X and people can impose as other users
-    response.set_cookie('user_id', str(user.id), max_age=max_age)
+    # response.set_cookie('user_id', str(user.id), max_age=max_age)
+
+    encoded = jwt.encode({"user_id": user.id}, "secret", algorithm="HS256")
+
+    response.set_cookie('auth_token', encoded, max_age=max_age)
+
     return response
 
 
 def check_login_status(request):
-    user_id = request.cookies.get('user_id')
+    auth_token = request.cookies.get('auth_token')
+    if not auth_token:
+        return False, None, "Not logged in"
+    
+    user_id = jwt.decode(auth_token, "secret", algorithms=["HS256"]).get("user_id")
+
     if not user_id:
         return False, None, "Not logged in"
     user = sql_helper.get_user(SessionLocal(), user_id)
@@ -36,7 +49,8 @@ def check_login_status(request):
 
 
 def get_user():
-    user_id = request.cookies.get('user_id')
+    auth_token = request.cookies.get('auth_token')
+    user_id = jwt.decode(auth_token, "secret", algorithms=["HS256"]).get("user_id")
     user = sql_helper.get_user(SessionLocal(), user_id)
     return user
 
@@ -56,10 +70,10 @@ def check_login():
     if not success:
         return make_response({"success": False, "message": message}, 400)
 
-@app.after_request
-def add_cors_header(response):
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    return response
+# @app.after_request
+# def add_cors_header(response):
+#     response.headers.add('Access-Control-Allow-Credentials', True)
+#     return response
 
 @app.route('/')
 @app.route('/health')
@@ -86,6 +100,7 @@ def signup():
 
 
 @app.route('/login', methods=['POST'])
+@cross_origin(supports_credentials=True)
 def login():
     data = request.get_json()
 
