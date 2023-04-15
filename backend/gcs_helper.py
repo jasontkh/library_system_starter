@@ -50,7 +50,17 @@ class CloudStorageHelper:
         return blob
 
     def get_signed_url(self, bucket_id: str, blob_id: str, method: str, expiration: int = 3600) -> str:
-        blob = self.client.bucket(bucket_id).blob(blob_id)
+        bucket = self.client.bucket(bucket_id)
+        # bucket.cors = [
+        #     {
+        #         "origin": ["*"],
+        #         "responseHeader": ["*"],
+        #         "method": ["*"],
+        #         "maxAgeSeconds": 3600
+        #     }
+        # ]
+        # bucket.patch()
+        blob = bucket.blob(blob_id)
         return blob.generate_signed_url(
             expiration=expiration,
             version="v4",

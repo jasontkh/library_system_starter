@@ -57,6 +57,10 @@ def get_user():
 
 @app.before_request
 def check_login():
+
+    if request.method == "OPTIONS":
+        return
+
     whitelisted_paths = [
         '/login',
         '/signup',
@@ -100,7 +104,6 @@ def signup():
 
 
 @app.route('/login', methods=['POST'])
-@cross_origin(supports_credentials=True)
 def login():
     data = request.get_json()
 
