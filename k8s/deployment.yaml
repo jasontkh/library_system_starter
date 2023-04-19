@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: library-system
+  labels:
+    app: library-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: library-system
+  template:
+    metadata:
+      labels:
+        app: library-system
+    spec:
+      containers:
+        - name: library-system
+          image: asia.gcr.io/bold-network-380012/library-system:0.1.0
+          env:
+            - name: SQLALCHEMY_DATABASE_URL
+              value: "postgresql://user:password@10.48.210.3:5432/postgres"
+            - name: REDIS_HOST
+              value: "10.48.208.3"
