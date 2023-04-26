@@ -3,3 +3,8 @@ __pycache__
 venv
 backend/service-account.json
 backend/data
+ml/.idea
+ml/temp
+ml/data_source
+ml/.ipynb_checkpoints
+ml/service-account.json
