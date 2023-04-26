@@ -19,6 +19,20 @@ gcs_helper = CloudStorageHelper(storage.Client.from_service_account_json('./serv
 publisher = PublisherClient.from_service_account_json('./service-account.json')
 redis = Redis(host=config.REDIS_HOST, port=config.REDIS_PORT)
 
+# Config CORS, this is a one time configuration
+from google.cloud import storage
+client = storage.Client.from_service_account_json('./service-account.json')
+bucket = client.bucket(config.BUCKET_NAME)
+bucket.cors = [
+    {
+        "origin": ["*"],
+        "responseHeader": ["*"],
+        "method": ["*"],
+        "maxAgeSeconds": 3600
+    }
+]
+bucket.patch()
+
 
 def store_login_status(response, user, max_age=60 * 60 * 24 * 7):
     # WARNING: Very insecure cookie setting
