@@ -16,12 +16,17 @@ services:
       - "6379:6379"
       - "8001:8001"
   backend-api:
-    build: .
+    build: ./backend
     image: libray-system:latest
     ports:
       - "5000:5000"
     volumes:
-      - .:/app
+      - ./backend:/app
     environment:
       SQLALCHEMY_DATABASE_URL: postgresql://user:password@postgres:5432/database
       REDIS_HOST: redis
+  frontend-api:
+    build: ./frontend
+    image: library-system-frontend:latest
+    ports:
+      - "3000:3000"
