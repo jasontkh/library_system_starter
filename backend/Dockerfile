@@ -10,5 +10,5 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-CMD ["flask", "--app", "main", "run", "--host", "0.0.0.0"]
+CMD ["sh", "./startup.sh"]
 

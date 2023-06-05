@@ -6,8 +6,13 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: user
       POSTGRES_DB: database
-    volumes:
-      - ./data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 1s
+      timeout: 1s
+      retries: 5
+    # volumes:
+    #   - ./data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
   redis:
@@ -15,6 +20,11 @@ services:
     ports:
       - "6379:6379"
       - "8001:8001"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 1s
+      retries: 5
   backend-api:
     build: ./backend
     image: libray-system:latest
@@ -25,8 +35,15 @@ services:
     environment:
       SQLALCHEMY_DATABASE_URL: postgresql://user:password@postgres:5432/database
       REDIS_HOST: redis
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
   frontend-api:
     build: ./frontend
     image: library-system-frontend:latest
     ports:
       - "3000:3000"
+    depends_on:
+      - backend-api
