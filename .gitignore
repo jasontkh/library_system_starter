@@ -3,6 +3,7 @@ __pycache__
 venv
 backend/service-account.json
 data/
+redis-data/
 ml/.idea
 ml/temp
 ml/data_source

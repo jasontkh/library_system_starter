@@ -17,7 +17,7 @@ app = Flask(__name__)
 CORS(app, supports_credentials=True)
 gcs_helper = CloudStorageHelper(storage.Client.from_service_account_json('./service-account.json'))
 publisher = PublisherClient.from_service_account_json('./service-account.json')
-redis = Redis(host=config.REDIS_HOST, port=config.REDIS_PORT)
+redis = Redis(host=config.REDIS_HOST, port=config.REDIS_PORT, decode_responses=True)
 
 # Config CORS, this is a one time configuration
 from google.cloud import storage
