@@ -43,11 +43,10 @@ export default function DocumentPage() {
         <div>Document ID: {props.document.id}</div>
         <iframe src={props.document.image_url} style={{flexGrow:1}}/>
         <Stack>
-
+          <h3>Related Documents</h3>
           {suggested.map((doc)=>{
-            <Box onClick={e=>{props.changeDoc(doc)}}>{doc.title}</Box>
+            return <Button variant="outlined" onClick={e=>{props.changeDoc(doc)}}>{doc.title}</Button>
           })}
-
         </Stack>
       </Box>
     )

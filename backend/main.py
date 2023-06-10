@@ -168,7 +168,18 @@ def list_documents():
 
 @app.route('/related_documents/<int:document_id>', methods=['GET'])
 def list_related_documents(document_id):
-    documents = redis_helper.get_related_documents(redis, document_id)
+    related_docs = redis_helper.get_related_documents(redis, document_id)
+    documents = []
+    session = SessionLocal()
+    for related_doc in related_docs:
+        doc = sql_helper.get_document(session, related_doc[0])
+        if doc:
+            documents.append({
+                "id": doc.id,
+                "title": doc.title,
+                "image_url": gcs_helper.get_signed_url(doc.bucket_id, doc.blob_id, "GET"),
+            })
+
     return make_response({"success": True, "documents": documents}, 200)
 
 @app.route('/request_upload_url', methods=['POST'])
