@@ -11,8 +11,6 @@ services:
       interval: 1s
       timeout: 1s
       retries: 5
-    volumes:
-      - ./data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
   redis:
@@ -25,30 +23,5 @@ services:
       interval: 1s
       timeout: 1s
       retries: 5
-    volumes:
-      - ./redis-data:/data
     environment:
       - REDIS_ARGS=--save 5 1
-
-  backend-api:
-    build: ./backend
-    image: libray-system:latest
-    ports:
-      - "5000:5000"
-    volumes:
-      - ./backend:/app
-    environment:
-      SQLALCHEMY_DATABASE_URL: postgresql://user:password@postgres:5432/database
-      REDIS_HOST: redis
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-  frontend-api:
-    build: ./frontend
-    image: library-system-frontend:latest
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend-api
