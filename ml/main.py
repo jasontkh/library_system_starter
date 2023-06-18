@@ -7,8 +7,8 @@ from google.cloud import storage
 import os
 import json
 
-topic_name = "projects/thematic-garage-386114/topics/dg-library"
-subscription_name = 'projects/thematic-garage-386114/subscriptions/dg-library-sub'
+topic_name = "projects/thematic-garage-386114/topics/dg-library-system"
+subscription_name = 'projects/thematic-garage-386114/subscriptions/dg-library-system-sub'
 
 with open("vectorizer.pkl", "rb") as fp:
     vectorizer = pickle.load(fp)

@@ -16,9 +16,13 @@ spec:
     spec:
       containers:
         - name: library-system
-          image: asia.gcr.io/bold-network-380012/library-system:0.1.0
+          image: asia.gcr.io/thematic-garage-386114/library-system:0.1.0
           env:
             - name: SQLALCHEMY_DATABASE_URL
-              value: "postgresql://user:password@10.48.210.3:5432/postgres"
+              value: "postgresql://user:password123@10.67.16.3:5432/database"
+            - name: BUCKET_NAME
+              value: dg-library-2302-klaus
             - name: REDIS_HOST
-              value: "10.48.208.3"
+              value: "10.67.17.3"
+            - name: PUBSUB_TOPIC
+              value: projects/thematic-garage-386114/topics/dg-library-system

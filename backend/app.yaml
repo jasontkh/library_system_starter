@@ -7,11 +7,11 @@ handlers:
   - url: /.*
     script: auto
 env_variables:
-  SQLALCHEMY_DATABASE_URL: postgresql://user:password@10.48.208.3:5432/postgres
-  BUCKET_NAME: dg-library-klaus-2212
-  PUBSUB_TOPIC: projects/bold-network-380012/topics/dg-library
-  REDIS_HOST: 10.89.180.51
+  SQLALCHEMY_DATABASE_URL: postgresql://user:password123@10.67.16.3:5432/database
+  BUCKET_NAME: dg-library-2302-klaus
+  PUBSUB_TOPIC: projects/thematic-garage-386114/topics/dg-library-system
+  REDIS_HOST: 10.67.17.3
   REDIS_PORT: 6379
 
 vpc_access_connector:
- name: projects/bold-network-380012/locations/asia-east2/connectors/vpc-access
+ name: projects/thematic-garage-386114/locations/asia-east2/connectors/connector
